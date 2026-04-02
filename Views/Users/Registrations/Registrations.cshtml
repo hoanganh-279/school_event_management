@@ -1,0 +1,173 @@
+﻿@* Views/Users/Registrations/Registrations.cshtml *@
+@using shcool_event_management.Models   @* ← Sửa namespace *@
+@{
+    ViewBag.Title = "Đăng ký của tôi";
+    ViewBag.ActivePage = "registrations";
+    Layout = "~/Views/Shared/_LayoutUsers.cshtml";
+
+    // Lấy dữ liệu từ ViewBag
+    var sv = ViewBag.SinhVien as SinhVien;
+    var DaDangKy = ViewBag.DaDangKy as List<DangKySuKien> ?? new List<DangKySuKien>();
+    var daThamDu = ViewBag.DaThamDu as List<DangKySuKien> ?? new List<DangKySuKien>();
+    var daHuy = ViewBag.DaHuy as List<DangKySuKien> ?? new List<DangKySuKien>();
+    var daLuu = ViewBag.DaLuu as List<DangKySuKien> ?? new List<DangKySuKien>();
+    var qrDict = ViewBag.QRDict as Dictionary<int, string> ?? new Dictionary<int, string>();
+
+    int tongDangKy = ViewBag.TongDangKy ?? 0;
+    int tongThamDu = ViewBag.TongThamDu ?? 0;
+    int tongSapToi = ViewBag.TongSapToi ?? 0;
+
+    // Thông tin sinh viên
+    string tenHienThi = sv != null ? (sv.Ten ?? sv.Ten ?? "Sinh Viên")
+                                   : (ViewBag.UserName as string ?? "Sinh Viên");
+
+    string maSV = sv?.ID ?? "---";
+    string lop = sv?.MaNghanh ?? sv?.MaNghanh ?? "";
+
+    // Tạo avatar (2 chữ cái đầu)
+    string avatar = "SV";
+    if (!string.IsNullOrWhiteSpace(tenHienThi))
+    {
+        var words = tenHienThi.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        avatar = words.Length >= 2
+         ? (words[0][0].ToString() + words[1][0].ToString()).ToUpper()
+         : words[0].Substring(0, Math.Min(2, words[0].Length)).ToUpper();
+    }
+}
+
+@* TempData alerts *@
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mx-3 mt-3" role="alert">
+        <span class="material-symbols-outlined" style="vertical-align:middle;font-size:18px">check_circle</span>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mx-3 mt-3" role="alert">
+        <span class="material-symbols-outlined" style="vertical-align:middle;font-size:18px">error</span>
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+
+        <!-- Sidebar -->
+        @Html.Partial("~/Views/Users/Registrations/_Sidebar.cshtml", new
+        {
+            SinhVien = sv,
+            TongDangKy = tongDangKy,
+            TongThamDu = tongThamDu,
+            TongSapToi = tongSapToi,
+            TenHienThi = tenHienThi,
+            MaSV = maSV,
+            Lop = lop,
+            Avatar = avatar
+        })
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <h1 class="ce-section-title mb-4 ce-reveal">Đăng ký của tôi</h1>
+
+            <div class="ce-tabs-wrapper ce-reveal">
+                <div class="ce-tabs mb-4">
+                    <button class="ce-tab-btn active" data-tab="tab-upcoming">
+                        Đã đăng ký
+                    </button>
+                    <button class="ce-tab-btn" data-tab="tab-attended">
+                        Đã tham dự
+                    </button>
+                    <button class="ce-tab-btn" data-tab="tab-cancelled">
+                        Đã huỷ
+                    </button>
+                    <button class="ce-tab-btn" data-tab="tab-saved">
+                        Đã lưu
+                    </button>
+                </div>
+
+                @Html.Partial("~/Views/Users/Registrations/_Upcoming.cshtml", DaDangKy)
+                @Html.Partial("~/Views/Users/Registrations/_Attended.cshtml", daThamDu)
+                @Html.Partial("~/Views/Users/Registrations/_Cancelled.cshtml", daHuy)
+                @Html.Partial("~/Views/Users/Registrations/_Saved.cshtml", daLuu)
+            </div>
+        </div>
+    </div>
+</div>
+
+    @* Modals *@
+    @Html.Partial("~/Views/Users/Registrations/_Modals.cshtml", new { QRDict = qrDict })
+
+    @section scripts {
+        <script>
+        function fastRemoveFavorite(btn, eventId) {
+            const card = document.getElementById('saved-item-' + eventId);
+            if (!card) return;
+
+            card.style.transition = 'all 0.4s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(50px)';
+            card.style.pointerEvents = 'none';
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            const formData = new FormData();
+            formData.append('maEvent', eventId);
+            if (token) {
+                formData.append('__RequestVerificationToken', token);
+            }
+
+            fetch('@Url.Action("RemoveFavorite", "Users")', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        card.remove();
+                        if (document.querySelectorAll('.saved-card').length === 0) {
+                            location.reload();
+                        }
+                    }, 400);
+                } else {
+                    alert(data.message || 'Không thể bỏ lưu!');
+                    resetCard(card);
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi:', err);
+                alert('Có lỗi xảy ra, vui lòng thử lại.');
+                resetCard(card);
+            });
+        }
+
+        function resetCard(card) {
+            card.style.opacity = '1';
+            card.style.transform = 'none';
+            card.style.pointerEvents = 'auto';
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const tabs = document.querySelectorAll('.ce-tab-btn');
+                const panes = document.querySelectorAll('.ce-tab-pane');
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const target = tab.getAttribute('data-tab');
+                        tabs.forEach(t => t.classList.remove('active'));
+                        panes.forEach(p => p.classList.remove('active'));
+                        tab.classList.add('active');
+                        const pane = document.getElementById(target);
+                        if (pane) pane.classList.add('active');
+                    });
+                });
+            });
+        </script>
+    }

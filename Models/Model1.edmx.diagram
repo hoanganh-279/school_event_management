@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c6f0492aa7e941b3a1bfc033b0503aab" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="school_event_managementModel.DangKySuKien" Width="1.5" PointX="8.25" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.DanhMuc" Width="1.5" PointX="0.75" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.DiaDiem" Width="1.5" PointX="0.75" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.EVENT" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.MaNghanh" Width="1.5" PointX="3.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.SinhVien" Width="1.5" PointX="6" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.SuKienYeuThich" Width="1.5" PointX="8.25" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.Vien" Width="1.5" PointX="0.75" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.vw_SoChoConLai" Width="1.5" PointX="8.5" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="school_event_managementModel.vw_UserStatsByYear" Width="1.5" PointX="5.75" PointY="9.75" IsExpanded="true" />
+        <AssociationConnector Association="school_event_managementModel.FK_DangKy_Event" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_DangKy_SinhVien" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_EVENT_DANHMUC" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_EVENT_DIADIEM" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_EVENT_NGUOIDANG" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_EVENT_VIEN" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_Favorites_Event" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_SINHVIEN_NGHANH" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_Favorites_SinhVien" ManuallyRouted="false" />
+        <AssociationConnector Association="school_event_managementModel.FK_SINHVIEN_VIEN" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
